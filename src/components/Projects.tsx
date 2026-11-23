@@ -1,6 +1,5 @@
 import { useState } from 'react'
-import { BookOpen, ChevronDown } from 'lucide-react'
-import { pakhlaiCaseStudy, projects, ui } from '../content/site-content'
+import { projects, ui } from '../content/site-content'
 import Chip from './ui/Chip'
 import Reveal from './ui/Reveal'
 import SectionLabel from './ui/SectionLabel'
@@ -35,23 +34,14 @@ function ProjectCard({ project }: { project: Project }) {
       <p className="mt-1 text-sm text-primary">{project.subtitle}</p>
       <p className="line-clamp-3 mt-5 max-w-[68ch] text-sm leading-[1.65] text-secondary">{project.description}</p>
       <div className="mt-6 flex flex-wrap gap-2">{project.tags.map((tag) => <Chip key={tag}>{tag}</Chip>)}</div>
-      {primary && <div className="mt-auto flex flex-wrap gap-x-6 gap-y-2 pt-7 text-sm font-medium text-accent">
-        {featured ? <a href={primary.href} target={primary.external && !isPlaceholder(primary.href) ? '_blank' : undefined} rel={primary.external && !isPlaceholder(primary.href) ? 'noopener noreferrer' : undefined} aria-label={primary.external && !isPlaceholder(primary.href) ? `${project.title} ${primary.label} (${ui.opensNewTab})` : `${project.title} ${primary.label}`} className="relative z-10 hover:text-accent-strong">{primary.label}</a> : <span aria-hidden="true">{primary.label}</span>}
-        {secondary.map((link) => <a key={link.label} href={link.href} target={link.external && !isPlaceholder(link.href) ? '_blank' : undefined} rel={link.external && !isPlaceholder(link.href) ? 'noopener noreferrer' : undefined} aria-label={link.external && !isPlaceholder(link.href) ? `${project.title} ${link.label} (${ui.opensNewTab})` : `${project.title} ${link.label}`} aria-disabled={isPlaceholder(link.href) ? true : undefined} onClick={isPlaceholder(link.href) ? (event) => event.preventDefault() : undefined} className="relative z-10 hover:text-accent-strong">{link.label}</a>)}
+      {(primary || project.slug === 'pakhlai') && <div className="project-actions">
+        {project.slug === 'pakhlai' && <PakhlaiCaseStudy />}
+        {primary && <div className="project-actions__links">
+          {featured ? <a href={primary.href} target={primary.external && !isPlaceholder(primary.href) ? '_blank' : undefined} rel={primary.external && !isPlaceholder(primary.href) ? 'noopener noreferrer' : undefined} aria-label={primary.external && !isPlaceholder(primary.href) ? `${project.title} ${primary.label} (${ui.opensNewTab})` : `${project.title} ${primary.label}`} className="relative z-10 hover:text-accent-strong">{primary.label}</a> : <span aria-hidden="true">{primary.label}</span>}
+          {secondary.map((link) => <a key={link.label} href={link.href} target={link.external && !isPlaceholder(link.href) ? '_blank' : undefined} rel={link.external && !isPlaceholder(link.href) ? 'noopener noreferrer' : undefined} aria-label={link.external && !isPlaceholder(link.href) ? `${project.title} ${link.label} (${ui.opensNewTab})` : `${project.title} ${link.label}`} aria-disabled={isPlaceholder(link.href) ? true : undefined} onClick={isPlaceholder(link.href) ? (event) => event.preventDefault() : undefined} className="relative z-10 hover:text-accent-strong">{link.label}</a>)}
+        </div>}
       </div>}
     </div>
-    {project.slug === 'pakhlai' && <details id="pakhlai-case-study" className="case-study-disclosure">
-      <summary className="case-study-summary">
-        <span className="case-study-summary__icon"><BookOpen aria-hidden="true" size={18} /></span>
-        <span className="case-study-summary__text">
-          <span className="case-study-summary__label case-study-summary__collapsed">{pakhlaiCaseStudy.summaryLabel}</span>
-          <span className="case-study-summary__label case-study-summary__expanded">{pakhlaiCaseStudy.summaryCloseLabel}</span>
-          <span className="case-study-summary__hint">{pakhlaiCaseStudy.summaryHint}</span>
-        </span>
-        <ChevronDown aria-hidden="true" size={20} className="case-study-summary__chevron" />
-      </summary>
-      <PakhlaiCaseStudy />
-    </details>}
   </article>
 }
 

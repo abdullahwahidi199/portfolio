@@ -198,13 +198,13 @@ export const projects = {
 
       links: [
         {
-          label: "Live Demo ↗",
+          label: "Live Demo",
           href: "https://app.pakhlai.com",
           external: true,
           primary: true,
         },
         {
-          label: "GitHub ↗",
+          label: "GitHub",
           href: "https://github.com/abdullahwahidi199/Restaurant-system",
           external: true,
         },
@@ -259,9 +259,8 @@ export const projects = {
 
 
 export const pakhlaiCaseStudy = {
-  "summaryLabel": "Read the case study",
-  "summaryCloseLabel": "Close the case study",
-  "summaryHint": "The story, the system, and the first real-world release.",
+  "summaryLabel": "View case study",
+  "dialogTitle": "Pakhlai case study",
   "eyebrow": "THE PAKHLAI STORY",
   "category": "PRODUCT ENGINEERING",
   "title": "A semester project.",
