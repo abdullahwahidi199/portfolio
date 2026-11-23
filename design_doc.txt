@@ -1,0 +1,516 @@
+1. Project Overview
+1.1 What This Is
+A single-page personal portfolio website for a Full-Stack Software Engineer with an AI/ML focus. One page. Sticky navbar. Anchor-scroll between sections. Dark theme by default with a light theme toggle.
+
+1.2 Goals (priority order)
+Get the owner hired or contacted — recruiters must evaluate skills, see projects, and reach out within 30 seconds.
+
+Showcase full-stack depth and AI/ML interest — the site itself should feel like a well-engineered artifact.
+
+Establish personal brand — confident, modern, understated, technical.
+
+1.3 Audience
+Technical recruiters (skim-first, mobile-heavy)
+
+Engineering managers / tech leads (evaluate depth, click GitHub)
+
+Peers and collaborators (network, open source)
+
+1.4 Success Criteria
+Lighthouse ≥ 95 on Performance, Accessibility, Best Practices, SEO (desktop + mobile).
+
+All primary content reachable within one scroll or one click.
+
+CLS < 0.1; all motion respects prefers-reduced-motion.
+
+No horizontal scroll between 320px and 1920px.
+
+1.5 Scope
+In: Navbar, Hero, About, Skills, Projects, Experience, Contact, Footer. Theme toggle. Scroll animations. Responsive layout.
+Out: Routing, backend, contact form submission, CMS, admin panel, blog, analytics, cookies, auth, i18n.
+
+1.6 Stack
+React 18+ (function components + hooks only), Vite, TypeScript (strict), Tailwind CSS, Framer Motion (reveals only). No router. No UI component library. Icons as inline SVG only.
+
+2. Site Owner — Profile Data
+All values below go into src/content/site-content.ts. Items marked [PLACEHOLDER] are the owner's to replace later — render them as editable constants, never fabricate substitutes.
+
+ts
+export const profile = {
+  name: "Alex Rivera",                             // [PLACEHOLDER]
+  title: "Full-Stack Software Engineer · AI/ML Enthusiast",
+  location: "Berlin, Germany (open to remote)",    // [PLACEHOLDER]
+  email: "alex.rivera@example.com",                // [PLACEHOLDER]
+  github: "https://github.com/alexrivera",         // [PLACEHOLDER]
+  linkedin: "https://linkedin.com/in/alexrivera",  // [PLACEHOLDER]
+  x: "https://x.com/alexrivera_dev",               // [PLACEHOLDER]
+  resumeUrl: "/resume.pdf",
+  avatar: "/avatar.jpg",
+  avatarInitials: "AR",
+};
+Tagline (Hero H1): I build fast, reliable web products — and teach machines to make them smarter.
+
+Sub-tagline: Full-stack engineer with 6+ years shipping production systems in TypeScript, Python, and Go. Currently focused on applied machine learning: RAG pipelines, embeddings, and LLM-powered developer tools.
+
+3. Information Architecture
+Single page, top to bottom. Navbar anchors link to these IDs.
+
+#	Section	Anchor ID	Purpose
+1	Navbar (sticky)	—	Nav links, theme toggle, résumé CTA
+2	Hero	#hero	Name, tagline, CTAs, decorative motif
+3	About	#about	Bio, avatar, quick facts
+4	Skills	#skills	Grouped tech chips
+5	Projects	#projects	4 project cards (1 featured)
+6	Experience	#experience	Vertical timeline, 4 entries
+7	Contact	#contact	CTA panel + contact links
+8	Footer	—	Copyright, social icons, back-to-top
+Navbar links: About · Skills · Projects · Experience · Contact · [Résumé ↓]
+
+4. Content Deck (src/content/site-content.ts)
+All user-facing copy lives here. Preserve strings exactly.
+
+ts
+export const hero = {
+  eyebrow: "FULL-STACK ENGINEER · AI/ML",
+  h1: "I build fast, reliable web products — and teach machines to make them smarter.",
+  subtext: "Full-stack engineer with 2+ years shipping production systems in TypeScript, Python, and Go. Currently focused on applied machine learning: RAG pipelines, embeddings, and LLM-powered developer tools.",
+  primaryCta: { label: "View Projects", href: "#projects" },
+  secondaryCta: { label: "Get in Touch", href: "#contact" },
+  tertiaryCta: { label: "Download Résumé ↓", href: "/resume.pdf", external: true },
+};
+
+export const about = {
+  label: "ABOUT",
+  heading: "Engineer first, curious always.",
+  paragraphs: [
+    "I'm Alex, a full-stack engineer based in Berlin. For the last six years I've designed and shipped web platforms end-to-end — from typed React frontends to Go services handling millions of requests a day. I care about the unglamorous parts: clear data models, fast feedback loops, and code the next person can read.",
+    "Lately my work has drifted toward applied AI. I've built retrieval-augmented search over internal docs, embedding-based recommendation systems, and LLM tooling that saves my team hours every week. I'm most energized at the intersection: solid software engineering applied to messy machine learning problems.",
+  ],
+  quickFacts: [
+    "📍 Berlin, Germany — remote-friendly",
+    "🧠 Focus: applied ML, RAG, developer tooling",
+    "🛠 Core stack: TypeScript · Python · Go · Postgres",
+    "🎓 B.Sc. Computer Science, TU Berlin",
+  ],
+};
+
+export const skills = {
+  label: "SKILLS",
+  heading: "Tools I reach for.",
+  groups: [
+    { name: "Languages",      items: ["TypeScript","Python","Go","SQL","Rust (learning)"] },
+    { name: "Frontend",       items: ["React","Next.js","Tailwind CSS","Framer Motion","Vite"] },
+    { name: "Backend",        items: ["Node.js","FastAPI","PostgreSQL","Redis","gRPC"] },
+    { name: "AI / ML",        items: ["PyTorch","LangChain","OpenAI API","pgvector","Hugging Face"] },
+    { name: "Infra & DevOps", items: ["Docker","Kubernetes","AWS","GitHub Actions","Terraform"], spanTwoColumns: true },
+  ],
+};
+
+export const projects = {
+  label: "PROJECTS",
+  heading: "Selected work.",
+  intro: "A few things I've built and shipped — full write-ups on GitHub.",
+  items: [
+    {
+      featured: true,
+      slug: "documind",
+      title: "DocuMind",
+      subtitle: "RAG-powered knowledge assistant",
+      description: "A retrieval-augmented chatbot that answers questions over a company's internal documentation. Hybrid search (BM25 + pgvector embeddings), streaming answers, citation highlighting. Serves ~300 daily users with p95 latency under 1.2s.",
+      tags: ["TypeScript","Next.js","FastAPI","pgvector","OpenAI"],
+      links: [
+        { label: "Live Demo ↗", href: "#", external: true, primary: true },
+        { label: "GitHub ↗",    href: "#", external: true },
+      ],
+    },
+    {
+      slug: "pulse",
+      title: "Pulse",
+      subtitle: "Real-time analytics dashboard",
+      description: "Event ingestion pipeline and dashboard processing 5M+ events/day. Go collector → Kafka → TimescaleDB, with a React dashboard rendering live charts via WebSockets.",
+      tags: ["Go","Kafka","TimescaleDB","React"],
+      links: [ { label: "GitHub ↗", href: "#", external: true, primary: true } ],
+    },
+    {
+      slug: "snippet-sage",
+      title: "Snippet Sage",
+      subtitle: "LLM developer-tooling CLI",
+      description: "A CLI that indexes your local codebase and answers questions about it in natural language. Local embeddings with a cached vector store; works offline for indexing, online for queries. 1.2k GitHub stars.",
+      tags: ["Python","Click","sentence-transformers","OpenAI"],
+      links: [ { label: "GitHub ↗", href: "#", external: true, primary: true } ],
+    },
+    {
+      slug: "transit-radar",
+      title: "Transit Radar",
+      subtitle: "Open-data transit map",
+      description: "Interactive map of live public-transit positions for a mid-size city, built on open GTFS-RT feeds. Deployed on a $5 VPS; handles 10k concurrent WebSocket clients.",
+      tags: ["TypeScript","MapLibre","Node.js","Redis"],
+      links: [
+        { label: "Live Demo ↗", href: "#", external: true, primary: true },
+        { label: "GitHub ↗",    href: "#", external: true },
+      ],
+    },
+  ],
+};
+
+export const experience = {
+  label: "EXPERIENCE",
+  heading: "Where I've worked.",
+  entries: [
+    {
+      role: "Senior Software Engineer",
+      company: "Northwind Labs",
+      dates: "2022 — Present",
+      location: "Berlin (Hybrid)",
+      bullets: [
+        "Lead engineer on an AI developer-tools team; shipped a RAG search product used by 40+ internal teams.",
+        "Migrated a legacy monolith's core services to Go, cutting p95 API latency by 58%.",
+        "Mentor 3 junior engineers; own the team's TypeScript and testing standards.",
+      ],
+    },
+    {
+      role: "Software Engineer",
+      company: "Helix Analytics",
+      dates: "2020 — 2022",
+      location: "Remote",
+      bullets: [
+        "Built a real-time event pipeline in Go + Kafka handling 5M+ events/day.",
+        "Designed the React dashboard used by all enterprise customers.",
+      ],
+    },
+    {
+      role: "Frontend Engineer",
+      company: "Bramble Studio",
+      dates: "2018 — 2020",
+      location: "Berlin",
+      bullets: [
+        "Shipped 12 client web apps in React/Next.js; introduced the studio's design-system practice.",
+        "Improved average Lighthouse performance score from 61 → 94 across client sites.",
+      ],
+    },
+    {
+      role: "B.Sc. Computer Science",
+      company: "TU Berlin",
+      dates: "2014 — 2018",
+      location: "Berlin",
+      bullets: [
+        "Thesis on approximate nearest-neighbor search for embedding retrieval.",
+      ],
+    },
+  ],
+};
+
+export const contact = {
+  label: "CONTACT",
+  heading: "Let's build something.",
+  body: "I'm open to senior full-stack roles and AI/ML-adjacent engineering work. The fastest way to reach me is email — I usually reply within a day.",
+  primaryCta: { label: "Email me", href: "mailto:alex.rivera@example.com" },
+  links: [
+    { label: "GitHub",   href: "https://github.com/alexrivera",      external: true },
+    { label: "LinkedIn", href: "https://linkedin.com/in/alexrivera", external: true },
+    { label: "X",        href: "https://x.com/alexrivera_dev",       external: true },
+  ],
+};
+
+export const footer = {
+  copyrightTemplate: "© {year} Alex Rivera. Built with React and Tailwind.",
+  backToTop: "Back to top ↑",
+};
+
+export const nav = {
+  links: [
+    { label: "About",      href: "#about" },
+    { label: "Skills",     href: "#skills" },
+    { label: "Projects",   href: "#projects" },
+    { label: "Experience", href: "#experience" },
+    { label: "Contact",    href: "#contact" },
+  ],
+  resumeCta: { label: "Résumé", href: "/resume.pdf", external: true },
+};
+5. Design System
+5.1 Brand Personality
+Modern, technical, understated. Dark-first. High contrast, generous whitespace, a single confident accent. Reads as "well-engineered tools," not "creative agency."
+
+5.2 Color Tokens
+Define as CSS custom properties on :root (dark default) and [data-theme="light"] in src/index.css. Map into tailwind.config.ts.
+
+Dark (default):
+
+Token	Hex	Usage
+--bg	#0B0E14	Page background (deep blue-black, not pure black)
+--bg-elevated	#11151F	Cards, navbar
+--border	#232A38	Dividers, card borders
+--text-primary	#E6EAF2	Headings, body
+--text-secondary	#9AA4B8	Subtext, labels
+--accent	#5EEAD4	CTAs, links, highlights
+--accent-strong	#2DD4BF	Hover states
+--accent-contrast	#04231F	Text on accent buttons
+--glow	rgba(94, 234, 212, 0.15)	Focus glows, hero motif
+Light:
+
+Token	Hex
+--bg	#F8FAFC
+--bg-elevated	#FFFFFF
+--border	#E2E8F0
+--text-primary	#0F172A
+--text-secondary	#475569
+--accent	#0D9488
+--accent-strong	#0F766E
+--accent-contrast	#FFFFFF
+Rules: No pure #000/#FFF in dark mode. Accent used sparingly — CTAs, active nav, link underlines, small decor. Never for long body text. Verify AA contrast for every text/background pair.
+
+5.3 Typography
+Role	Font	Weight	Size (desktop / mobile)	Line-height
+H1	Space Grotesk	600	56 / 36 px	1.1
+H2	Space Grotesk	600	36 / 28 px	1.2
+H3	Space Grotesk	600	22 / 20 px	1.3
+Body	Inter	400	17 / 16 px	1.65
+Label	Inter	500	13 px, uppercase, letter-spacing 0.08em	1.4
+Mono / chips	JetBrains Mono	400	13 px	1.4
+Self-host the three fonts as woff2 in public/fonts/ and load via @font-face with font-display: swap. (No next/font — this is React + Vite.) Preload the H1 and body weights.
+
+Max paragraph width 68ch.
+
+Section label style: uppercase, accent color, letter-spacing 0.12em, preceded by a 24px accent rule line.
+
+5.4 Spacing
+8px base scale: 4, 8, 12, 16, 24, 32, 48, 64, 96, 128.
+
+Section vertical padding: 96px desktop / 64px mobile.
+
+Container max-width 1120px, horizontal padding 24px mobile / 40px desktop, centered.
+
+5.5 Radius & Elevation
+Radius: 12px cards, 8px buttons/inputs, 999px chips and pills.
+
+Card (dark): background: var(--bg-elevated), border: 1px solid var(--border), inset 0 1px 0 rgba(255,255,255,0.03).
+
+Card hover: translateY(-4px), border accent-tinted 40%, box-shadow: 0 12px 32px rgba(0,0,0,0.35).
+
+5.6 Motion
+Easing: cubic-bezier(0.22, 1, 0.36, 1).
+
+Durations: hover 150ms, reveal 500ms, stagger step 80ms.
+
+Scroll reveals: fade + translateY(16px) → 0, triggered once at 15% visibility (Framer Motion whileInView, viewport={{ once: true, amount: 0.15 }}).
+
+prefers-reduced-motion: reduce → disable all transforms, glow pulses, and smooth scroll.
+
+6. Component Specifications
+Each component receives its data from site-content.ts. Each is a self-contained function component.
+
+6.1 <Navbar />
+Sticky top, 64px tall, backdrop-filter: blur(12px), background color-mix(in srgb, var(--bg) 80%, transparent). A 1px bottom border appears only after 24px of scroll (track with window.scrollY).
+
+Left: wordmark Alex Rivera· (accent dot), Space Grotesk 600.
+
+Center/right (≥768px): nav.links items. Active link (via scroll-spy) is accent-colored with an underline pill.
+
+Right: theme toggle (sun/moon icon, 40×40 hit area, aria-label="Toggle theme", aria-pressed={isDark}), Résumé outline pill.
+
+Mobile (<768px): hamburger button opens a full-width dropdown panel below the navbar. Tap targets ≥48px. Closes on link tap or Esc. Traps focus while open. Returns focus to trigger on close. aria-expanded reflects state.
+
+6.2 <Hero />
+min-height: calc(100vh - 64px), content vertically centered, left-aligned in the container.
+
+Order: eyebrow label → H1 → subtext (secondary, ≤60ch) → CTA row: primary (accent-filled pill), secondary (outline pill), tertiary (text link with ↓).
+
+Background motif (≥768px only): soft radial --glow behind an abstract node-graph SVG on the right. Dots + connecting lines, opacity ~0.25, 8s pulse on 3 nodes (disabled under reduced motion). On mobile: hide the graph; keep a faint top-right glow.
+
+Bottom-center thin animated chevron scroll indicator; hidden on mobile.
+
+6.3 <About />
+Desktop: 2-column grid 1fr 1.4fr, gap 64px. Left: avatar (160px circular, accent ring at 30% opacity). Right: heading, two paragraphs, quick-facts list.
+
+Avatar: <img src="/avatar.jpg" onError={fallback to initials}> — if image fails, render a circle with avatarInitials in Space Grotesk, secondary color.
+
+Quick facts: stacked rows, --bg-elevated bg, border, radius 8px, padding 10px 14px, 8px gap.
+
+Mobile: single column, avatar centered above text.
+
+6.4 <Skills />
+Heading row, then the groups array. Each group: label (small uppercase secondary) above a wrapping flex row of <Chip />s.
+
+Chip: JetBrains Mono 13px, padding 6px 12px, radius 999px, --bg-elevated, --border, --text-primary. Hover: accent-tinted border only (chips are not links).
+
+Desktop: 2-column grid (repeat(2, 1fr), gap 40px 64px). Any group with spanTwoColumns: true spans both columns. Mobile: single column.
+
+6.5 <Projects />
+CSS grid repeat(2, 1fr), gap 24px. Featured project spans both columns and uses a horizontal layout on desktop (image 45% left, content right). On mobile, featured stacks vertically like a standard card.
+
+Standard card: image top (16:9), content below with padding 24px: title + subtitle, description (secondary, 3-line clamp with ellipsis), tag chips (non-interactive), link row at bottom.
+
+Featured card shows a small FEATURED accent chip at the top-left of the content area.
+
+Link style: text + ↗ arrow icon, accent color.
+
+Card link integrity: the whole card surface is clickable via the first primary: true link using the stretched-link pattern (absolute inset-0 anchor with aria-label). Any secondary links sit above with position: relative; z-index: 1. No nested <a> elements.
+
+Image placeholder: if /projects/<slug>.png is missing (onError), render a gradient placeholder (linear-gradient(135deg, #1a2233, #0f1420) dark / light equivalent) with the project's initial (Space Grotesk 48px, secondary color) centered.
+
+Card hover: translateY(-4px), border accent-tinted 40%, deeper shadow.
+
+6.6 <Experience />
+Vertical timeline: 2px left rail (--border), 10px accent dot marker at each entry, with a subtle ring.
+
+Entry content: role (<h3>), company + dates row (company primary, dates secondary mono), location line (secondary small), bullet list with accent dash markers, 1.65 line-height, secondary text.
+
+Desktop: 3-column grid — dot column | content | dates column (140px, right-aligned). Mobile: single column, rail at 16px, dates below company.
+
+6.7 <Contact />
+Full-width panel inside the container: --bg-elevated background, radius 16px, border, padding 64px desktop / 32px mobile, corner accent radial glow.
+
+Layout: copy + primary Email me accent button; secondary social links (icon + label) in a horizontal row. Desktop: may split into 2 columns (copy left | links right). Mobile: stacked.
+
+Email me uses <a href={contact.primaryCta.href}> (mailto).
+
+6.8 <Footer />
+Top border, padding 40px 0, flex row: copyright (secondary small) left; social icons (GitHub, LinkedIn, X, Email — 24px, secondary → accent hover) and Back to top ↑ right.
+
+copyrightTemplate renders with {year} replaced by new Date().getFullYear().
+
+Back to top scrolls to #hero via href="#hero".
+
+Mobile: vertical stack, centered.
+
+6.9 Shared primitives
+<Button variant="primary" | "secondary" | "ghost" /> — pill shape, correct colors per tokens.
+
+<Chip /> — used for skills and project tags.
+
+<SectionLabel label="..." /> — rule line + uppercase accent label.
+
+<Reveal> — Framer Motion whileInView fade + up wrapper; disabled if prefers-reduced-motion.
+
+7. Interaction & State
+Theme:
+
+Default dark. data-theme="dark" set on <html> in index.html.
+
+Toggle in Navbar updates document.documentElement.dataset.theme, writes localStorage['theme'], reflects aria-pressed.
+
+On first load, read localStorage['theme']; if absent, use prefers-color-scheme. Prevent flash with an inline <script> in index.html <head> that sets data-theme before React mounts.
+
+Scroll-spy: IntersectionObserver with rootMargin: "-40% 0px -55% 0px"; update active nav link.
+
+Smooth scroll: html { scroll-behavior: smooth }. All section IDs have scroll-margin-top: 80px to offset the sticky navbar. Disabled under reduced motion.
+
+Focus: :focus-visible → 2px solid var(--accent), outline-offset: 3px, box-shadow: 0 0 0 6px var(--glow).
+
+External links open in new tab with rel="noopener noreferrer" and aria-label noting "opens in new tab" where not obvious.
+
+Reduced motion: no reveals, no glow pulse, no smooth scroll. Detected via window.matchMedia('(prefers-reduced-motion: reduce)').
+
+8. Responsive Behavior
+Breakpoint	Min width	Key changes
+sm	640px	—
+md	768px	Navbar links; About 2-col; Hero graph visible
+lg	1024px	Skills 2-col; Projects 2-col + featured span; timeline dates column
+xl	1280px	Container caps at 1120px
+Mobile-first base at 375px. Touch targets ≥44×44px. No horizontal scroll anywhere between 320px and 1920px.
+
+9. Accessibility (WCAG 2.1 AA)
+Landmarks: <header>, <nav>, <main>, <section aria-labelledby>, <footer>.
+
+One <h1> (hero). Sections use <h2>. Card titles use <h3>.
+
+All images have alt; decorative SVGs are aria-hidden="true".
+
+Text contrast ≥ 4.5:1; UI/large text ≥ 3:1 in both themes.
+
+Theme toggle reflects state via aria-pressed.
+
+Mobile menu: aria-expanded toggling, focus trap, Esc closes, focus returns to trigger.
+
+Skip-to-content link as the first focusable element, jumps to #main.
+
+Full keyboard operability in logical order.
+
+prefers-reduced-motion honored everywhere.
+
+10. Technical Implementation Notes
+10.1 Stack
+Build tool: Vite
+
+Framework: React 18+ (function components + hooks only)
+
+Language: TypeScript (strict mode)
+
+Styling: Tailwind CSS (JIT), tokens mapped in tailwind.config.ts
+
+Motion: Framer Motion (reveals only; CSS transitions for hovers)
+
+Icons: inline SVG only
+
+10.2 File Structure
+text
+/index.html                       — root HTML, theme-init inline script, skip link target
+/vite.config.ts
+/tailwind.config.ts
+/src/main.tsx                     — React root
+/src/App.tsx                      — composes all sections in order
+/src/index.css                    — CSS vars, base styles, @font-face
+/src/content/site-content.ts      — ALL copy (Section 4)
+/src/lib/theme.ts                 — theme toggle helpers
+/src/lib/useScrollSpy.ts          — scroll-spy hook
+/src/lib/useReducedMotion.ts      — reduced-motion hook
+/src/components/Navbar.tsx
+/src/components/Hero.tsx
+/src/components/About.tsx
+/src/components/Skills.tsx
+/src/components/Projects.tsx
+/src/components/Experience.tsx
+/src/components/Contact.tsx
+/src/components/Footer.tsx
+/src/components/ui/Button.tsx
+/src/components/ui/Chip.tsx
+/src/components/ui/SectionLabel.tsx
+/src/components/ui/Reveal.tsx
+/public/avatar.jpg                — placeholder (1×1 transparent if absent)
+/public/resume.pdf                — placeholder file
+/public/projects/*.png            — placeholders optional
+/public/fonts/*.woff2             — self-hosted Space Grotesk, Inter, JetBrains Mono
+10.3 Data Flow
+App.tsx imports site-content.ts and passes each section's slice into its component as props (or components import their own slice directly — pick one and be consistent). No global state library. Theme handled via data-theme on <html> + a small hook in Navbar.
+
+10.4 SEO & Meta
+<title>Alex Rivera — Full-Stack Software Engineer</title> in index.html.
+
+Meta description = hero subtext (≤160 chars).
+
+Open Graph + Twitter card tags. lang="en" on <html>.
+
+Generate og-image placeholder at /public/og-image.png (accent gradient is fine).
+
+10.5 Performance
+Self-host fonts, preload H1/body weights.
+
+All images have explicit width/height (or aspect-ratio CSS) to prevent layout shift.
+
+Lazy-load project images (loading="lazy").
+
+Decorative SVGs inline and small.
+
+No third-party scripts.
+
+10.6 Fallbacks
+Missing avatar → initials circle.
+
+Missing project image → gradient + initial placeholder.
+
+# placeholder links → keep as <a href="#"> with a code comment so the owner knows to replace.
+
+11. Definition of Done
+□ npm run build succeeds with no TypeScript errors and no ESLint warnings.
+□ npm run dev serves the site; all 8 sections render with exact copy from Section 4.
+□ Correct anchor IDs on every section (#hero, #about, #skills, #projects, #experience, #contact).
+□ Dark theme is default; toggle persists via localStorage; no flash of wrong theme.
+□ Design tokens from Section 5 applied exactly; all three fonts loaded.
+□ Layout renders correctly from 320px to 1920px; no horizontal scroll.
+□ Mobile nav opens/closes with focus trap and Esc.
+□ Scroll reveals, hovers, and scroll-spy work; reduced-motion disables them.
+□ Lighthouse ≥ 95 across all four categories (mobile + desktop).
+□ Keyboard-only navigation works; skip link present; contrast verified.
+□ Every user-facing string lives in site-content.ts; no hardcoded copy inside components.
+□ Placeholders ([PLACEHOLDER], missing images, # links) degrade gracefully.
+□ No router installed; no libraries beyond Vite, React, TypeScript, Tailwind, Framer Motion.
